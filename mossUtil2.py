@@ -82,6 +82,11 @@ def main():
         elif(language == ".cs"):
             fullLanguage = "csharp"
 
+        if not directory:
+            directory = "moss"
+            print(f"No directory specified. Using default directory: {directory}")
+
+
         m = mosspy.Moss(userid, fullLanguage)
 
 
