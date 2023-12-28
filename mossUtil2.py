@@ -1,6 +1,13 @@
 import mosspy
 import subprocess
 import re
+import os
+import shutil
+import json
+import stat
+
+#   YOU WILL NEED TO RUN "pip install mosspy" FOR THIS TO WORK 
+#   you will not be able to run pip without python btw
 
 def extract_substring_after_moss(input_string):
     pattern = r"mis.*?submissions"
@@ -66,20 +73,39 @@ def process_output(output, keyword):
 def main():
     try:
         userid = 813921095
-        assnCode = input("\nMISMoss - 2023 \n \nWhat is the assignment code of the assignment you would like to check?\n")
+        assnCode = input("\nMISMoss - 2023 \n \nWhat is the assignment code of the assignment you would like to check?\n\n(you can find this by going to gh classroom, clicking an assignment, clicking download,\n selecting student repositories, and copying the numbers at the end of the command in the box)\n")
         directory = input("\nWhat is the directory you would like to run the program in? \nIf one does not exist by the name provided, one will be created.\n")
         language = input("\nPlease type in the file extension for the language you would like to check in the following format: .js\n")
-        # basefile = input("\nWould you like to include a basefile?")
         fullLanguage = ""
         if(language == ".js"):
             fullLanguage = "javascript"
         elif(language == ".cs"):
             fullLanguage = "csharp"
+
+        m = mosspy.Moss(userid, fullLanguage)
+
+
+        while True:
+            add_more = input("\nDo you want to add a base file? (yes/no): \n").strip().lower()
+
+            if add_more in ["yes", "y"]:
+                # User wants to add a base file, ask for the file path
+                file_path = input("\nEnter the path to the base file or the name of the file: \n").strip()
+                try:
+                    m.addBaseFile(file_path)
+                    print(f"Base file '{file_path}' added.")
+                except Exception as e:
+                    print(f"Error: {e}")
+            else:
+                break
+               
+
+
+        print("cloning repos...")
+                
         # output directory is equal to the name of the directory all of the repos were cloned into
         outputDir = clone_repos(assnCode, directory)
-        # print(outputDir)
-        # outputDir = "mis321-pa2-submissions"
-        m = mosspy.Moss(userid, fullLanguage)
+        move_js_files_to_top("./" + directory + "/" + outputDir, language)
 
         # Submission Files
         m.setDirectoryMode(1)
