@@ -9,13 +9,14 @@ import stat
 #   YOU WILL NEED TO RUN "pip install mosspy" FOR THIS TO WORK 
 #   you will not be able to run pip without python btw
 
-def extract_substring_after_moss(input_string):
+def extract_substring_after_moss(input_string: str):
+    file_tree = input_string.split("/")
     pattern = r"mis.*?submissions"
-    match = re.search(pattern, input_string)
-    if match:
-        return match.group()
-    else:
-        return "No match found for the pattern"
+    for step in file_tree:
+        if(re.match(pattern, step)):
+            return step
+    
+    return "No match found for the pattern"
 
 
 def move_js_files_to_top(root_dir, language):
@@ -38,9 +39,9 @@ def move_js_files_to_top(root_dir, language):
 
 
 
-def clone_repos(assnCode, directory):
+def clone_repos(assnCode, assnDir):
     """List repositories of a given GitHub assignment code."""
-    command = ["gh", "classroom", "clone", "student-repos", "-a", assnCode, "--directory", directory, "--all"]
+    command = ["gh", "classroom", "clone", "student-repos", "-a", assnCode, "--directory", assnDir, "--all"]
 
 
     # runs the above repo clone command, which returns the output of the command
@@ -48,7 +49,7 @@ def clone_repos(assnCode, directory):
     # filters the command output to get the name of the directory that the repos were cloned into
     outputDir = extract_substring_after_moss(unfilteredOutputDir)
     # returns the directory that the repos were cloned into
-    return outputDir
+    return os.path.join(os.getcwd(), assnDir, outputDir)
 
 def run_cli_command(command, keyword):
     """Run a command and return the output."""
@@ -74,7 +75,7 @@ def main():
     try:
         userid = 813921095
         assnCode = input("\nMISMoss - 2023 \n \nWhat is the assignment code of the assignment you would like to check?\n\n(you can find this by going to gh classroom, clicking an assignment, clicking download,\n selecting student repositories, and copying the numbers at the end of the command in the box)\n")
-        directory = input("\nWhat is the directory you would like to run the program in? \nIf one does not exist by the name provided, one will be created.\n")
+        assnDir = input("\nWhat is the directory you would like to run the program in? \nIf one does not exist by the name provided, one will be created.\n")
         language = input("\nPlease type in the file extension for the language you would like to check in the following format: .js\n")
         fullLanguage = ""
         if(language == ".js"):
@@ -82,9 +83,9 @@ def main():
         elif(language == ".cs"):
             fullLanguage = "csharp"
 
-        if not directory:
-            directory = "moss"
-            print(f"No directory specified. Using default directory: {directory}")
+        if not assnDir:
+            assnDir = "moss"
+            print(f"No assnDir specified. Using default directory: {assnDir}")
 
 
         m = mosspy.Moss(userid, fullLanguage)
@@ -108,13 +109,12 @@ def main():
 
         print("cloning repos...")
                 
-        # output directory is equal to the name of the directory all of the repos were cloned into
-        outputDir = clone_repos(assnCode, directory)
-        move_js_files_to_top("./" + directory + "/" + outputDir, language)
+        # output assnDir is equal to the name of the directory all of the repos were cloned into
+        outputDir = clone_repos(assnCode, assnDir)
+        move_js_files_to_top(outputDir, language)
 
         # Submission Files
-        m.setDirectoryMode(1)
-        m.addFilesByWildcard("./" + directory + "/" + outputDir + "/*/*" + language)
+        m.addFilesByWildcard(outputDir + "/*/*" + language)
 
   
         url = m.send(lambda file_path, display_name: print('*', end='', flush=True))
