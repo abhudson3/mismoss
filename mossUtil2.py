@@ -23,8 +23,8 @@ def move_js_files_to_top(root_dir, language):
     # Loop through all items in the root directory
     for item in os.listdir(root_dir):
         path = os.path.join(root_dir, item)
-        # Check if the item is a directory
-        if os.path.isdir(path):
+        # Check if the item is a directory and not "node_modules"
+        if os.path.isdir(path) and path != os.path.join(root_dir, "node_modules"):
             # Walk through the directory
             for subdir, dirs, files in os.walk(path):
                 for file in files:
@@ -32,9 +32,12 @@ def move_js_files_to_top(root_dir, language):
                     if file.endswith(language):
                         source_file_path = os.path.join(subdir, file)
                         destination_file_path = os.path.join(path, file)
-                        # Move the JavaScript file to the top of the directory
-                        shutil.move(source_file_path, destination_file_path)
-                        print(f"Moved: {source_file_path} to {destination_file_path}")
+                        # Check if the source file is not within any "node_modules" folder
+                        if not any(part.endswith("node_modules") for part in source_file_path.split(os.path.sep)):
+                            # Move the JavaScript file to the top of the directory
+                            shutil.move(source_file_path, destination_file_path)
+                            print(f"Moved: {source_file_path} to {destination_file_path}")
+
 
 
 
