@@ -9,14 +9,24 @@ import stat
 #   YOU WILL NEED TO RUN "pip install mosspy" FOR THIS TO WORK 
 #   you will not be able to run pip without python btw
 
+# def extract_substring_after_moss(input_string: str):
+#     file_tree = input_string.split("/")
+#     pattern = r"mis.*?submissions"
+#     for step in file_tree:
+#         if(re.match(pattern, step)):
+#             return step
+    
+#     return "No match found for the pattern"
+
 def extract_substring_after_moss(input_string: str):
-    file_tree = input_string.split("/")
+    file_tree = input_string.split(os.path.sep)  # Use os.path.sep instead of "/"
     pattern = r"mis.*?submissions"
     for step in file_tree:
-        if(re.match(pattern, step)):
+        if re.match(pattern, step):
             return step
     
     return "No match found for the pattern"
+
 
 
 def move_js_files_to_top(root_dir, language):
