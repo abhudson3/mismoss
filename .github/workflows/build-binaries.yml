@@ -15,21 +15,31 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install PyInstaller
-        run: pip install pyinstaller mosspy
+      - name: Install dependencies
+        run: pip install pyinstaller requests rich  # your actual dependencies
 
       - name: Build mismoss for macOS
         run: |
-          pyinstaller --name mismoss_mac --onefile mossUtil2.py
+          pyinstaller --name mismoss_mac --onefile mismoss.py
           mv dist/mismoss_mac ./mismoss_mac
 
-      - name: Commit macOS binary
+      - name: Commit and push macOS binary
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
+
+          git pull --rebase
           git add mismoss_mac
           git commit -m "Add macOS binary [auto]" || echo "No changes to commit"
-          git push
+
+          n=0
+          until [ $n -ge 5 ]
+          do
+            git pull --rebase && git push && break
+            n=$((n+1))
+            echo "Retrying push ($n)..."
+            sleep 2
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,20 +53,31 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install PyInstaller
-        run: pip install pyinstaller mosspy
+      - name: Install dependencies
+        run: pip install pyinstaller requests rich  # your actual dependencies
 
       - name: Build mismoss for Windows
         run: |
-          pyinstaller --name mismoss_windows --onefile mossUtil2.py
+          pyinstaller --name mismoss_windows --onefile mismoss.py
           move dist\\mismoss_windows.exe mismoss_windows.exe
 
-      - name: Commit Windows binary
+      - name: Commit and push Windows binary
+        shell: bash
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
+
+          git pull --rebase
           git add mismoss_windows.exe
           git commit -m "Add Windows binary [auto]" || echo "No changes to commit"
-          git push
+
+          n=0
+          until [ $n -ge 5 ]
+          do
+            git pull --rebase && git push && break
+            n=$((n+1))
+            echo "Retrying push ($n)..."
+            sleep 2
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
