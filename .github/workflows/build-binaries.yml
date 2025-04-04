@@ -60,6 +60,7 @@ jobs:
         run: pip install pyinstaller mosspy
 
       - name: Build mismoss for Windows
+        shell: cmd
         run: |
           pyinstaller --name mismoss_windows --onefile mismoss.py
           if exist mismoss_windows.exe del mismoss_windows.exe
