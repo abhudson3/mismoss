@@ -16,7 +16,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pyinstaller requests rich  # your actual dependencies
+        run: pip install pyinstaller mosspy # your actual dependencies
 
       - name: Build mismoss for macOS
         run: |
@@ -54,7 +54,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pyinstaller requests rich  # your actual dependencies
+        run: pip install pyinstaller mosspy # your actual dependencies
 
       - name: Build mismoss for Windows
         run: |
