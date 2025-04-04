@@ -1,0 +1,62 @@
+name: Build mismoss for Mac & Windows
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller mosspy
+
+      - name: Build mismoss for macOS
+        run: |
+          pyinstaller --name mismoss_mac --onefile mismoss.py
+          mv dist/mismoss_mac ./mismoss_mac
+
+      - name: Commit macOS binary
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add mismoss_mac
+          git commit -m "Add macOS binary [auto]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller mosspy
+
+      - name: Build mismoss for Windows
+        run: |
+          pyinstaller --name mismoss_windows --onefile mismoss.py
+          move dist\\mismoss_windows.exe mismoss_windows.exe
+
+      - name: Commit Windows binary
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add mismoss_windows.exe
+          git commit -m "Add Windows binary [auto]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
