@@ -20,7 +20,7 @@ jobs:
 
       - name: Build mismoss for macOS
         run: |
-          pyinstaller --name mismoss_mac --onefile mismoss.py
+          pyinstaller --name mismoss_mac --onefile mossUtil2.py
           mv dist/mismoss_mac ./mismoss_mac
 
       - name: Commit macOS binary
@@ -48,7 +48,7 @@ jobs:
 
       - name: Build mismoss for Windows
         run: |
-          pyinstaller --name mismoss_windows --onefile mismoss.py
+          pyinstaller --name mismoss_windows --onefile mossUtil2.py
           move dist\\mismoss_windows.exe mismoss_windows.exe
 
       - name: Commit Windows binary
