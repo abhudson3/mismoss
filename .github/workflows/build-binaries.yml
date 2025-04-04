@@ -62,6 +62,7 @@ jobs:
       - name: Build mismoss for Windows
         run: |
           pyinstaller --name mismoss_windows --onefile mismoss.py
+          if exist mismoss_windows.exe del mismoss_windows.exe
           move dist\\mismoss_windows.exe mismoss_windows.exe
 
       - name: Commit and push Windows binary
