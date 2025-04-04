@@ -16,7 +16,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pyinstaller mosspy # your actual dependencies
+        run: pip install pyinstaller mosspy
 
       - name: Build mismoss for macOS
         run: |
@@ -28,7 +28,10 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
 
+          git stash --include-untracked
           git pull --rebase
+          git stash pop || echo "Nothing to pop"
+
           git add mismoss_mac
           git commit -m "Add macOS binary [auto]" || echo "No changes to commit"
 
@@ -54,7 +57,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pyinstaller mosspy # your actual dependencies
+        run: pip install pyinstaller mosspy
 
       - name: Build mismoss for Windows
         run: |
@@ -67,7 +70,10 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
 
+          git stash --include-untracked
           git pull --rebase
+          git stash pop || echo "Nothing to pop"
+
           git add mismoss_windows.exe
           git commit -m "Add Windows binary [auto]" || echo "No changes to commit"
 
