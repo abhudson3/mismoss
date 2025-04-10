@@ -10,7 +10,7 @@ import stat
 #   you will not be able to run pip without python btw
 
 def extract_substring_after_moss(input_string: str):
-    file_tree = input_string.split("/")
+    file_tree = input_string.split(os.path.sep)
     pattern = r"mis.*?submissions"
     for step in file_tree:
         if(re.match(pattern, step)):
